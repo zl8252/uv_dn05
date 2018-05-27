@@ -13,15 +13,20 @@ class GameLevel extends StatefulWidget {
     @required this.gameProperties,
     @required this.word,
     @required this.onLevelCompleted,
+    @required this.onExitButtonPressed,
   })  : assert(gameProperties != null),
         assert(word != null),
-        assert(onLevelCompleted != null);
+        assert(onLevelCompleted != null),
+        assert(onExitButtonPressed != null),
+        super(key: new Key(word.word));
 
   final GameProperties gameProperties;
 
   final Word word;
 
   final VoidCallback onLevelCompleted;
+
+  final VoidCallback onExitButtonPressed;
 
   @override
   _GameLevelState createState() => new _GameLevelState();
@@ -44,7 +49,7 @@ class _GameLevelState extends State<GameLevel> {
       widget.word.asLetters(widget.gameProperties.upperCased);
 
   List<DraggableLetterItem> _createDraggableItems() {
-    return letters.map((Letter letter) {
+    List<DraggableLetterItem> r = letters.map((Letter letter) {
       return new DraggableLetterItem(
         letter: letter,
         child: new BigLetter(
@@ -58,6 +63,10 @@ class _GameLevelState extends State<GameLevel> {
         onDragCompleted: _onDragCompleted,
       );
     }).toList();
+
+    r.shuffle();
+
+    return r;
   }
 
   void _onDragCompleted(DraggableLetterItem draggableLetterItem) {
@@ -81,21 +90,32 @@ class _GameLevelState extends State<GameLevel> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      body: new Center(
-        child: new Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            new Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                _buildTopRow(),
-                _buildBottomRow(),
-              ],
-            )
-          ],
-        ),
+      body: new Stack(
+        children: <Widget>[
+          // exit button
+          new Positioned(
+            top: 0.0,
+              left: 0.0,
+              child: new FlatButton(
+            onPressed: widget.onExitButtonPressed,
+            child: new Image.asset("graphics/back_arrow.png", height: 30.0,),
+          )),
+          // content
+          new Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              new Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  _buildTopRow(),
+                  _buildBottomRow(),
+                ],
+              )
+            ],
+          )
+        ],
       ),
     );
   }

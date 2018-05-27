@@ -8,34 +8,52 @@ import 'game_level.dart';
 class GamePage extends StatefulWidget {
   GamePage({
     @required this.gameProperties,
-  }) : assert(gameProperties != null);
+    @required this.onExitGame,
+  })  : assert(gameProperties != null),
+        assert(onExitGame != null);
 
   final GameProperties gameProperties;
+
+  final VoidCallback onExitGame;
 
   @override
   _GamePageState createState() => new _GamePageState();
 }
 
 class _GamePageState extends State<GamePage> {
+  List<Word> _words;
+
   int _currentWordIndex;
 
   @override
   void initState() {
     super.initState();
 
+    _words = widget.gameProperties.words;
+    _words.shuffle();
+
     _currentWordIndex = 0;
   }
 
-  Word get _currentWord => widget.gameProperties.words[_currentWordIndex];
+  Word get _currentWord => _words[_currentWordIndex];
 
-  void onLevelCompleted() {
+  void _onLevelCompleted() {
     int wordIndex = _currentWordIndex;
     wordIndex++;
-    wordIndex = wordIndex % widget.gameProperties.words.length;
+
+    if (wordIndex == _words.length) {
+      widget.onExitGame();
+      return;
+    }
 
     setState(() {
       _currentWordIndex = wordIndex;
     });
+  }
+
+  void _onExitButtonPressed() {
+    print("Exit button pressed");
+    widget.onExitGame();
   }
 
   @override
@@ -43,7 +61,8 @@ class _GamePageState extends State<GamePage> {
     return new GameLevel(
       gameProperties: widget.gameProperties,
       word: _currentWord,
-      onLevelCompleted: onLevelCompleted,
+      onLevelCompleted: _onLevelCompleted,
+      onExitButtonPressed: _onExitButtonPressed,
     );
   }
 }

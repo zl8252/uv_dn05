@@ -34,25 +34,74 @@ class _MainPageState extends State<MainPage> {
         builder: (_) {
           return new GamePage(
             gameProperties: _gameProperties,
+            onExitGame: () {
+              Navigator.of(context).pop();
+            },
           );
         },
       ),
     );
   }
 
+  Future<Null> _showSettingsPage() async {
+    await Navigator.of(context).push(
+      new MaterialPageRoute(builder: (_) {
+        return new SettingsPage(
+            initialGameProperties: _gameProperties,
+            onSettingsCompleted: (GameProperties newGameProperties) {
+              Navigator.of(context).pop();
+
+              setState(() {
+                _gameProperties = newGameProperties;
+              });
+            });
+      }),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      body: new Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      body: new Stack(
         children: <Widget>[
-          new RaisedButton(
-            child: new Text("Play"),
-            onPressed: () {
-              _showGamePage();
-            },
+          // settings button
+          new Positioned(
+            top: 50.0,
+            right: 0.0,
+            child: new GestureDetector(
+              child: new Icon(Icons.settings),
+              onLongPress: () {
+                print("Opening Settings Page");
+                _showSettingsPage();
+              },
+            ),
           ),
+          // main
+          new Center(
+            child: new Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                new Text(
+                  "Pisalnik",
+                  style: new TextStyle(
+                      fontSize: 50.0, fontWeight: FontWeight.w600),
+                ),
+                new Container(
+                  padding: new EdgeInsets.only(top: 20.0),
+                  child: new FlatButton(
+                    onPressed: () {
+                      print("Opening Game Page");
+                      _showGamePage();
+                    },
+                    child: new Image.asset(
+                      "graphics/play_button.png",
+                      width: 70.0,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
         ],
       ),
     );

@@ -7,7 +7,9 @@ class DraggableLetterTarget extends StatefulWidget {
     @required this.targetLetter,
     @required this.targetChild,
     @required this.targetHitChild,
-  });
+  })  : assert(targetLetter != null),
+        assert(targetChild != null),
+        assert(targetHitChild != null);
 
   final Letter targetLetter;
 

@@ -28,4 +28,17 @@ class Word {
 
     return r;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is Word &&
+              runtimeType == other.runtimeType &&
+              word == other.word;
+
+  @override
+  int get hashCode => word.hashCode;
+
+
+
 }
