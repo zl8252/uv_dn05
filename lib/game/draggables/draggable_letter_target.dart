@@ -1,36 +1,52 @@
 import 'package:flutter/material.dart';
 
-import 'draggable_data.dart';
+import 'package:uv_dn05/data/all.dart';
 
 class DraggableLetterTarget extends StatefulWidget {
+  DraggableLetterTarget({
+    @required this.targetLetter,
+    @required this.targetChild,
+    @required this.targetHitChild,
+  });
+
+  final Letter targetLetter;
+
+  final Widget targetChild;
+
+  final Widget targetHitChild;
+
   @override
   _DraggableLetterTargetState createState() =>
       new _DraggableLetterTargetState();
 }
 
 class _DraggableLetterTargetState extends State<DraggableLetterTarget> {
+  bool isTargetHit = false;
+
   @override
   Widget build(BuildContext context) {
-    return new DragTarget<DraggableData>(
-      onAccept: (DraggableData draggableData) {
-        print("Accepted");
+    return new DragTarget<Letter>(
+      onWillAccept: (Letter letter) {
+        return letter == widget.targetLetter;
       },
-      onWillAccept: (DraggableData data) {
-        return true;
+      onAccept: (Letter letter) {
+        setState(() {
+          isTargetHit = true;
+        });
       },
-      builder: _buildContent,
+      builder: _dragTargetBuilder,
     );
   }
 
-  Widget _buildContent(
+  Widget _dragTargetBuilder(
     BuildContext context,
-    List<DraggableData> candidateData,
+    List<Letter> candidateData,
     List rejectedData,
   ) {
-    return new Container(
-      width: 100.0,
-      height: 100.0,
-      color: Colors.tealAccent,
-    );
+    if (isTargetHit) {
+      return widget.targetChild;
+    } else {
+      return widget.targetHitChild;
+    }
   }
 }

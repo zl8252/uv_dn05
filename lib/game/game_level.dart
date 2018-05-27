@@ -1,0 +1,204 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:meta/meta.dart';
+
+import 'package:uv_dn05/data/all.dart';
+
+import 'draggables/all.dart';
+import 'items/all.dart';
+
+class GameLevel extends StatefulWidget {
+  GameLevel({
+    @required this.gameProperties,
+    @required this.word,
+    @required this.onLevelCompleted,
+  })  : assert(gameProperties != null),
+        assert(word != null),
+        assert(onLevelCompleted != null);
+
+  final GameProperties gameProperties;
+
+  final Word word;
+
+  final VoidCallback onLevelCompleted;
+
+  @override
+  _GameLevelState createState() => new _GameLevelState();
+}
+
+class _GameLevelState extends State<GameLevel> {
+  static const EdgeInsets _targetLetterPadding =
+      const EdgeInsets.symmetric(horizontal: 8.0);
+
+  List<DraggableLetterItem> _draggableItems;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _draggableItems = _createDraggableItems();
+  }
+
+  List<Letter> get letters =>
+      widget.word.asLetters(widget.gameProperties.upperCased);
+
+  List<DraggableLetterItem> _createDraggableItems() {
+    return letters.map((Letter letter) {
+      return new DraggableLetterItem(
+        letter: letter,
+        child: new BigLetter(
+          backgroundColor: Colors.grey[300],
+          letter: letter,
+        ),
+        feedback: new BigLetter(
+          backgroundColor: Colors.blue[200],
+          letter: letter,
+        ),
+        onDragCompleted: _onDragCompleted,
+      );
+    }).toList();
+  }
+
+  void _onDragCompleted(DraggableLetterItem draggableLetterItem) {
+    setState(() {
+      _draggableItems.remove(draggableLetterItem);
+      if (_draggableItems.length == 0) {
+        _onLevelCompleted();
+      }
+    });
+  }
+
+  Future<Null> _onLevelCompleted() async {
+    print("Level Completed");
+
+    await new Future.delayed(new Duration(
+      seconds: 2,
+    ));
+    widget.onLevelCompleted();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      body: new Center(
+        child: new Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            new Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                _buildTopRow(),
+                _buildBottomRow(),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTopRow() {
+    List<Widget> columns = <Widget>[];
+
+    // left column
+    List<Widget> leftColumnItems = <Widget>[];
+
+    // word
+    if (widget.gameProperties.showWord) {
+      leftColumnItems.add(_buildWord());
+    }
+
+    // targets
+    leftColumnItems.add(_buildTargetsWidget());
+
+    columns.add(
+      new Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: leftColumnItems,
+      ),
+    );
+
+    // right column
+    if (widget.gameProperties.showGraphic) {
+      columns.add(
+        new Center(
+          child: new Image.asset(
+            widget.word.graphic,
+            width: 150.0,
+          ),
+        ),
+      );
+    }
+
+    return new Row(
+      children: columns,
+    );
+  }
+
+  Widget _buildWord() {
+    return new Row(
+      children: letters
+          .map(
+            (letter) => new Container(
+                  padding: _targetLetterPadding,
+                  child: new BigLetter(
+                    backgroundColor: Colors.transparent,
+                    letter: letter,
+                  ),
+                ),
+          )
+          .toList(),
+    );
+  }
+
+  Widget _buildTargetsWidget() {
+    return new Container(
+      padding: new EdgeInsets.only(top: 16.0),
+      child: new Row(
+        children: letters.map(
+          (letter) {
+            return new DraggableLetterTarget(
+              targetLetter: letter,
+              targetChild: new Container(
+                padding: _targetLetterPadding,
+                child: new BigLetter(
+                  backgroundColor: Colors.red[200],
+                  letter: letter,
+                ),
+              ),
+              targetHitChild: new Container(
+                padding: _targetLetterPadding,
+                child: new BigLetter(
+                  backgroundColor: Colors.green[300],
+                  letter: letter,
+                ),
+              ),
+            );
+          },
+        ).toList(),
+      ),
+    );
+  }
+
+  Widget _buildBottomRow() {
+    return new Container(
+      padding: new EdgeInsets.only(top: 32.0),
+      child: new Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: _draggableItems
+            .map(
+              (item) => new Container(
+                    padding: new EdgeInsets.symmetric(horizontal: 16.0),
+                    child: item,
+                  ),
+            )
+            .toList(),
+      ),
+    );
+  }
+}

@@ -22,7 +22,11 @@ class BigLetter extends StatelessWidget {
       child: new Center(
         child: new Text(
           letter.letter,
-          style: new TextStyle(fontSize: 35.0),
+          style: new TextStyle(
+            color: Colors.black,
+            inherit: false,
+            fontSize: 35.0,
+          ),
         ),
       ),
     );
