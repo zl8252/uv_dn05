@@ -46,9 +46,9 @@ class _DraggableLetterTargetState extends State<DraggableLetterTarget> {
     List rejectedData,
   ) {
     if (isTargetHit) {
-      return widget.targetChild;
-    } else {
       return widget.targetHitChild;
+    } else {
+      return widget.targetChild;
     }
   }
 }

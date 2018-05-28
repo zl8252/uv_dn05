@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
+import 'package:audioplayer/audioplayer.dart';
 
 import 'package:uv_dn05/data/all.dart';
 
@@ -38,9 +39,23 @@ class _GameLevelState extends State<GameLevel> {
 
   List<DraggableLetterItem> _draggableItems;
 
+  AudioPlayer _audioPlayer;
+
+  int playerState;
+
   @override
   void initState() {
     super.initState();
+
+    _audioPlayer = new AudioPlayer();
+
+    _audioPlayer.setDurationHandler((d) {});
+
+    _audioPlayer.setPositionHandler((p) {});
+
+    _audioPlayer.setCompletionHandler(() {});
+
+    _audioPlayer.setErrorHandler(print);
 
     _draggableItems = _createDraggableItems();
   }
@@ -70,6 +85,8 @@ class _GameLevelState extends State<GameLevel> {
   }
 
   void _onDragCompleted(DraggableLetterItem draggableLetterItem) {
+    _playCongratsSound();
+
     setState(() {
       _draggableItems.remove(draggableLetterItem);
       if (_draggableItems.length == 0) {
@@ -78,11 +95,22 @@ class _GameLevelState extends State<GameLevel> {
     });
   }
 
+  _playCongratsSound() async {
+    try {
+      if (widget.gameProperties.makeSound) {
+        final result = await _audioPlayer
+            .play(widget.gameProperties.congratsSoundURL, isLocal: false);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   Future<Null> _onLevelCompleted() async {
     print("Level Completed");
 
     await new Future.delayed(new Duration(
-      seconds: 2,
+      seconds: 1,
     ));
     widget.onLevelCompleted();
   }
@@ -94,12 +122,15 @@ class _GameLevelState extends State<GameLevel> {
         children: <Widget>[
           // exit button
           new Positioned(
-            top: 0.0,
+              top: 0.0,
               left: 0.0,
               child: new FlatButton(
-            onPressed: widget.onExitButtonPressed,
-            child: new Image.asset("graphics/back_arrow.png", height: 30.0,),
-          )),
+                onPressed: widget.onExitButtonPressed,
+                child: new Image.asset(
+                  "graphics/back_arrow.png",
+                  height: 30.0,
+                ),
+              )),
           // content
           new Row(
             mainAxisSize: MainAxisSize.max,
@@ -144,12 +175,22 @@ class _GameLevelState extends State<GameLevel> {
 
     // right column
     if (widget.gameProperties.showGraphic) {
+      Widget image;
+      if (widget.word.graphic.startsWith("http")) {
+        image = new Image.network(
+          widget.word.graphic,
+          width: 150.0,
+        );
+      } else {
+        image = new Image.asset(
+          widget.word.graphic,
+          width: 150.0,
+        );
+      }
+
       columns.add(
         new Center(
-          child: new Image.asset(
-            widget.word.graphic,
-            width: 150.0,
-          ),
+          child: image,
         ),
       );
     }
@@ -186,14 +227,16 @@ class _GameLevelState extends State<GameLevel> {
               targetChild: new Container(
                 padding: _targetLetterPadding,
                 child: new BigLetter(
-                  backgroundColor: Colors.red[200],
-                  letter: letter,
+                  backgroundColor: Colors.green[300],
+                  letter: widget.gameProperties.showHint
+                      ? letter
+                      : new Letter(letter: "_"),
                 ),
               ),
               targetHitChild: new Container(
                 padding: _targetLetterPadding,
                 child: new BigLetter(
-                  backgroundColor: Colors.green[300],
+                  backgroundColor: Colors.red[200],
                   letter: letter,
                 ),
               ),

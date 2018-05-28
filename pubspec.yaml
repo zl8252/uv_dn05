@@ -3,6 +3,7 @@ description: Uporabniski Vmesniki dn05
 
 dependencies:
   meta: "^1.1.5"
+  audioplayer: "^0.4.0"
   flutter:
     sdk: flutter
 
@@ -33,6 +34,7 @@ flutter:
     - graphics/play_button.png
     - graphics/polz.png
     - graphics/riba.png
+    - sounds/correct.mp3
 
   # To add assets to your application, add an assets section, like this:
   # assets:

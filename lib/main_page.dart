@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:uv_dn05/data/all.dart';
 import 'package:uv_dn05/game/all.dart';
@@ -24,6 +25,8 @@ class _MainPageState extends State<MainPage> {
       showHint: true,
       makeSound: true,
       upperCased: true,
+      congratsSoundURL:
+          "https://raw.githubusercontent.com/zl8252/uv_dn05/master/sounds/correct.mp3",
       words: initialWords,
     );
   }
@@ -61,13 +64,20 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Removes top bar
+    SystemChrome.setEnabledSystemUIOverlays([]);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+
     return new Scaffold(
       body: new Stack(
         children: <Widget>[
           // settings button
           new Positioned(
-            top: 50.0,
-            right: 0.0,
+            top: 0.0,
+            left: 0.0,
             child: new GestureDetector(
               child: new Icon(Icons.settings),
               onLongPress: () {

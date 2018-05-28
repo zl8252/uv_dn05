@@ -10,6 +10,7 @@ class GameProperties {
     @required this.showHint,
     @required this.makeSound,
     @required this.upperCased,
+    @required this.congratsSoundURL,
     @required this.words,
   });
 
@@ -23,6 +24,8 @@ class GameProperties {
 
   final bool upperCased;
 
+  final String congratsSoundURL;
+
   final List<Word> words;
 
   GameProperties copyWith({
@@ -31,6 +34,7 @@ class GameProperties {
     bool showHint,
     bool makeSound,
     bool upperCased,
+    String congratsSoundURL,
     List<Word> words,
   }) {
     return new GameProperties(
@@ -39,6 +43,7 @@ class GameProperties {
       showHint: showHint ?? this.showHint,
       makeSound: makeSound ?? this.makeSound,
       upperCased: upperCased ?? this.upperCased,
+      congratsSoundURL: congratsSoundURL ?? this.congratsSoundURL,
       words: words ?? this.words,
     );
   }
