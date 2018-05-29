@@ -16,8 +16,8 @@ class BigLetter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Container(
-      width: 50.0,
-      height: 50.0,
+      width: 100.0,
+      height: 100.0,
       color: backgroundColor,
       child: new Center(
         child: new Text(
@@ -25,7 +25,7 @@ class BigLetter extends StatelessWidget {
           style: new TextStyle(
             color: Colors.black,
             inherit: false,
-            fontSize: 35.0,
+            fontSize: 50.0,
           ),
         ),
       ),

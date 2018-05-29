@@ -11,6 +11,7 @@ class Word {
         assert(graphic != null);
 
   final String word;
+
   final String graphic;
 
   List<Letter> asLetters(bool uperCase) {
@@ -32,13 +33,8 @@ class Word {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is Word &&
-              runtimeType == other.runtimeType &&
-              word == other.word;
+      other is Word && runtimeType == other.runtimeType && word == other.word;
 
   @override
   int get hashCode => word.hashCode;
-
-
-
 }

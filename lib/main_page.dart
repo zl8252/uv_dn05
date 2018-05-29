@@ -15,11 +15,22 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   GameProperties _gameProperties;
 
+  bool _loading;
+
   @override
   void initState() {
     super.initState();
 
-    _gameProperties = new GameProperties(
+    _loading = true;
+
+    _initGameProperties();
+  }
+
+  Future<Null> _initGameProperties() async {
+    _gameProperties = await loadGameProperties();
+
+    // default
+    _gameProperties ??= new GameProperties(
       showGraphic: true,
       showWord: true,
       showHint: true,
@@ -29,6 +40,19 @@ class _MainPageState extends State<MainPage> {
           "https://raw.githubusercontent.com/zl8252/uv_dn05/master/sounds/correct.mp3",
       words: initialWords,
     );
+
+    setState(() {
+      _loading = false;
+    });
+  }
+
+  Future<Null> _saveGameProperties() async {
+    bool success = await saveGameProperties(_gameProperties);
+    if (success) {
+      print("GameProperties saved");
+    } else {
+      print("Error saving GameProperties");
+    }
   }
 
   Future<Null> _showGamePage() async {
@@ -54,6 +78,8 @@ class _MainPageState extends State<MainPage> {
             onSettingsCompleted: (GameProperties newGameProperties) {
               Navigator.of(context).pop();
 
+              _saveGameProperties();
+
               setState(() {
                 _gameProperties = newGameProperties;
               });
@@ -70,6 +96,14 @@ class _MainPageState extends State<MainPage> {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
+
+    if (_loading) {
+      return new Scaffold(
+        body: new Center(
+          child: new CircularProgressIndicator(),
+        ),
+      );
+    }
 
     return new Scaffold(
       body: new Stack(

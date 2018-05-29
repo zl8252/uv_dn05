@@ -35,7 +35,7 @@ class GameLevel extends StatefulWidget {
 
 class _GameLevelState extends State<GameLevel> {
   static const EdgeInsets _targetLetterPadding =
-      const EdgeInsets.symmetric(horizontal: 8.0);
+      const EdgeInsets.symmetric(horizontal: 10.0);
 
   List<DraggableLetterItem> _draggableItems;
 
@@ -179,12 +179,12 @@ class _GameLevelState extends State<GameLevel> {
       if (widget.word.graphic.startsWith("http")) {
         image = new Image.network(
           widget.word.graphic,
-          width: 150.0,
+          width: 350.0,
         );
       } else {
         image = new Image.asset(
           widget.word.graphic,
-          width: 150.0,
+          width: 350.0,
         );
       }
 
@@ -218,7 +218,7 @@ class _GameLevelState extends State<GameLevel> {
 
   Widget _buildTargetsWidget() {
     return new Container(
-      padding: new EdgeInsets.only(top: 16.0),
+      padding: new EdgeInsets.only(top: 80.0),
       child: new Row(
         children: letters.map(
           (letter) {
@@ -249,18 +249,24 @@ class _GameLevelState extends State<GameLevel> {
 
   Widget _buildBottomRow() {
     return new Container(
-      padding: new EdgeInsets.only(top: 32.0),
-      child: new Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: _draggableItems
-            .map(
-              (item) => new Container(
-                    padding: new EdgeInsets.symmetric(horizontal: 16.0),
-                    child: item,
-                  ),
-            )
-            .toList(),
+//      padding: new EdgeInsets.only(top: 250.0),
+      height: 400.0,
+      child: new Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          new Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: _draggableItems
+                .map(
+                  (item) => new Container(
+                        padding: new EdgeInsets.symmetric(horizontal: 16.0),
+                        child: item,
+                      ),
+                )
+                .toList(),
+          )
+        ],
       ),
     );
   }
